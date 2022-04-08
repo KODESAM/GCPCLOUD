@@ -1,0 +1,867 @@
+
+Welcome to Cloud Shell! Type "help" to get started.
+To set your Cloud Platform project in this session use “gcloud config set project [PROJECT_ID]”
+s_aamir_mail@cloudshell:~$ gcloud config set project wide-retina-346520
+Updated property [core/project].
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ export PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')
+
+export ZONE=us-central1-b
+export CLUSTER=gke-progression-cluster
+export APP_NAME=myapp
+Your active configuration is: [cloudshell-21530]
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable \
+    cloudresourcemanager.googleapis.com \
+    container.googleapis.com \
+    sourcerepo.googleapis.com \
+    cloudbuild.googleapis.com \
+    containerregistry.googleapis.com \
+    --async
+Asynchronous operation is in progress... Use the following command to wait for its completion:
+ gcloud beta services operations wait operations/acf.p2-294619223509-9527781d-1959-4cfb-8ad8-892fd24dcc51
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud beta services operations wait operations/acf.p2-294619223509-9527781d-1959-4cfb-8ad8-892fd24dcc51
+ERROR: (gcloud.beta.services.operations.wait) User [s.aamir.mail@gmail.com] does not have permission to access operations instance [acf.p2-294619223509-9527781d-1959-4cfb-8ad8-892fd24dcc51] (or it may not exist): Your application has authenticated using end user credentials from the Google Cloud SDK or Google Cloud Shell which are not supported by the serviceconsumermanagement.googleapis.com. We recommend configuring the billing/quota_project setting in gcloud or using a service account through the auth/impersonate_service_account setting. For more information about service accounts and how to use them in your application, see https://cloud.google.com/docs/authentication/. If you are getting this error with curl or similar tools, you may need to specify 'X-Goog-User-Project' HTTP header for quota and billing purposes. For more information regarding 'X-Goog-User-Project' header, please check https://cloud.google.com/apis/docs/system-parameters.
+- '@type': type.googleapis.com/google.rpc.ErrorInfo
+  domain: googleapis.com
+  metadata:
+    consumer: projects/618104708054
+    service: serviceconsumermanagement.googleapis.com
+  reason: SERVICE_DISABLED
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable cloudresourcemanager.googleapis.com
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable container.googleapis.com
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable sourcerepo.googleapis.com
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable cloudbuild.googleapis.com
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services enable containerregistry.googleapis.com
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services status
+ERROR: (gcloud.services) Invalid choice: 'status'.
+Maybe you meant:
+  gcloud services disable
+  gcloud services enable
+  gcloud services list
+
+To search the help text of gcloud commands, run:
+  gcloud help -- SEARCH_TERMS
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services list
+NAME: autoscaling.googleapis.com
+TITLE: Cloud Autoscaling API
+
+NAME: bigquery.googleapis.com
+TITLE: BigQuery API
+
+NAME: bigquerymigration.googleapis.com
+TITLE: BigQuery Migration API
+
+NAME: bigquerystorage.googleapis.com
+TITLE: BigQuery Storage API
+
+NAME: cloudapis.googleapis.com
+TITLE: Google Cloud APIs
+
+NAME: cloudbilling.googleapis.com
+TITLE: Cloud Billing API
+
+NAME: cloudbuild.googleapis.com
+TITLE: Cloud Build API
+
+NAME: clouddebugger.googleapis.com
+TITLE: Cloud Debugger API
+
+NAME: cloudresourcemanager.googleapis.com
+TITLE: Cloud Resource Manager API
+
+NAME: cloudtrace.googleapis.com
+TITLE: Cloud Trace API
+
+NAME: compute.googleapis.com
+TITLE: Compute Engine API
+
+NAME: container.googleapis.com
+TITLE: Kubernetes Engine API
+
+NAME: containerfilesystem.googleapis.com
+TITLE: Container File System API
+
+NAME: containerregistry.googleapis.com
+TITLE: Container Registry API
+
+NAME: datastore.googleapis.com
+TITLE: Cloud Datastore API
+
+NAME: iam.googleapis.com
+TITLE: Identity and Access Management (IAM) API
+
+NAME: iamcredentials.googleapis.com
+TITLE: IAM Service Account Credentials API
+
+NAME: logging.googleapis.com
+TITLE: Cloud Logging API
+
+NAME: monitoring.googleapis.com
+TITLE: Cloud Monitoring API
+
+NAME: oslogin.googleapis.com
+TITLE: Cloud OS Login API
+
+NAME: pubsub.googleapis.com
+TITLE: Cloud Pub/Sub API
+
+NAME: servicemanagement.googleapis.com
+TITLE: Service Management API
+
+NAME: serviceusage.googleapis.com
+TITLE: Service Usage API
+
+NAME: sourcerepo.googleapis.com
+TITLE: Cloud Source Repositories API
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NAME: sql-component.googleapis.com
+TITLE: Cloud SQL
+
+NAME: storage-api.googleapis.com
+TITLE: Google Cloud Storage JSON API
+
+NAME: storage-component.googleapis.com
+TITLE: Cloud Storage
+
+NAME: storage.googleapis.com
+TITLE: Cloud Storage API
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ gcloud services list --help
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ git clone https://github.com/GoogleCloudPlatform/software-delivery-workshop.git gke-progression
+Cloning into 'gke-progression'...
+remote: Enumerating objects: 810, done.
+remote: Counting objects: 100% (567/567), done.
+remote: Compressing objects: 100% (367/367), done.
+remote: Total 810 (delta 270), reused 409 (delta 167), pack-reused 243
+Receiving objects: 100% (810/810), 512.42 KiB | 11.39 MiB/s, done.
+Resolving deltas: 100% (401/401), done.
+s_aamir_mail@cloudshell:~ (wide-retina-346520)$ cd gke-progression/labs/gke-progression
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ ls -l
+total 24
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 build
+drwxr-xr-x 4 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 k8s
+-rw-r--r-- 1 s_aamir_mail s_aamir_mail 11159 Apr  8 20:11 README.md
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 src
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ rm -rf ../../.git
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ ls -l
+total 24
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 build
+drwxr-xr-x 4 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 k8s
+-rw-r--r-- 1 s_aamir_mail s_aamir_mail 11159 Apr  8 20:11 README.md
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 src
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ cat k8s/deployments/dev/frontend-dev.yaml.tmpl
+# Copyright 2021 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: $APP_NAME-dev
+spec:
+  selector:
+    matchLabels:
+      app: $APP_NAME
+      role: frontend
+      env: dev
+  template:
+    metadata:
+      name: frontend
+      labels:
+        app: $APP_NAME
+        role: frontend
+        env: dev
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/$PROJECT_ID/$APP_NAME:1.0.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        ports:
+        - name: frontend
+          containerPort: 8080
+        env:
+          - name: PORT
+            value: "8080"s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ for template in $(find . -name '*.tmpl'); do envsubst '${PROJECT_ID} ${ZONE} ${CLUSTER} ${APP_NAME}' < ${template} > ${template%.*}; done
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ cat k8s/deployments/dev/frontend-dev.yaml.tmpl
+# Copyright 2021 Google Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: $APP_NAME-dev
+spec:
+  selector:
+    matchLabels:
+      app: $APP_NAME
+      role: frontend
+      env: dev
+  template:
+    metadata:
+      name: frontend
+      labels:
+        app: $APP_NAME
+        role: frontend
+        env: dev
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/$PROJECT_ID/$APP_NAME:1.0.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        ports:
+        - name: frontend
+          containerPort: 8080
+        env:
+          - name: PORT
+            value: "8080"s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git config --global user.email "s.aamir.mail@gmail.com"
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git config --global user.name "KODESAM"
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud source repos create gke-progression
+Created [gke-progression].
+WARNING: You may be billed for this repository. See https://cloud.google.com/source-repositories/docs/pricing for details.
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git init
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint:   git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint:   git branch -m <name>
+Initialized empty Git repository in /home/s_aamir_mail/gke-progression/labs/gke-progression/.git/
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git config credential.helper gcloud.sh
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git remote add gcp https://source.developers.google.com/p/$PROJECT_ID/r/gke-progression
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git branch -m main
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git add . && git commit -m "initial commit"
+[main (root-commit) 5394108] initial commit
+ 23 files changed, 1194 insertions(+)
+ create mode 100644 README.md
+ create mode 100644 build/branch-cloudbuild.yaml
+ create mode 100644 build/branch-cloudbuild.yaml.tmpl
+ create mode 100644 build/branch-trigger.json
+ create mode 100644 build/branch-trigger.json.tmpl
+ create mode 100644 build/main-cloudbuild.yaml
+ create mode 100644 build/main-cloudbuild.yaml.tmpl
+ create mode 100644 build/main-trigger.json
+ create mode 100644 build/main-trigger.json.tmpl
+ create mode 100644 build/tag-cloudbuild.yaml
+ create mode 100644 build/tag-cloudbuild.yaml.tmpl
+ create mode 100644 build/tag-trigger.json
+ create mode 100644 build/tag-trigger.json.tmpl
+ create mode 100644 k8s/deployments/canary/frontend-canary.yaml
+ create mode 100644 k8s/deployments/canary/frontend-canary.yaml.tmpl
+ create mode 100644 k8s/deployments/dev/frontend-dev.yaml
+ create mode 100644 k8s/deployments/dev/frontend-dev.yaml.tmpl
+ create mode 100644 k8s/deployments/prod/frontend-production.yaml
+ create mode 100644 k8s/deployments/prod/frontend-production.yaml.tmpl
+ create mode 100644 k8s/services/frontend.yaml
+ create mode 100644 k8s/services/frontend.yaml.tmpl
+ create mode 100644 src/Dockerfile
+ create mode 100644 src/app.py
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git push gcp main
+Enumerating objects: 33, done.
+Counting objects: 100% (33/33), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (33/33), done.
+Writing objects: 100% (33/33), 9.11 KiB | 1.52 MiB/s, done.
+Total 33 (delta 15), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (15/15)
+To https://source.developers.google.com/p/wide-retina-346520/r/gke-progression
+ * [new branch]      main -> main
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud container clusters create ${CLUSTER} \
+    --project=${PROJECT_ID} \
+    --zone=${ZONE}
+Default change: VPC-native is the default mode during cluster creation for versions greater than 1.21.0-gke.1500. To create advanced routes based clusters, please pass the `--no-enable-ip-alias` flag
+Note: Your Pod address range (`--cluster-ipv4-cidr`) can accommodate at most 1008 node(s).
+Creating cluster gke-progression-cluster in us-central1-b... Cluster is being health-checked (master is healthy)...work
+ing...
+Creating cluster gke-progression-cluster in us-central1-b... Cluster is being health-checked (master is healthy)...done
+.
+Created [https://container.googleapis.com/v1/projects/wide-retina-346520/zones/us-central1-b/clusters/gke-progression-cluster].
+To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-central1-b/gke-progression-cluster?project=wide-retina-346520
+kubeconfig entry generated for gke-progression-cluster.
+NAME: gke-progression-cluster
+LOCATION: us-central1-b
+MASTER_VERSION: 1.21.6-gke.1503
+MASTER_IP: 104.197.221.18
+MACHINE_TYPE: e2-medium
+NODE_VERSION: 1.21.6-gke.1503
+NUM_NODES: 3
+STATUS: RUNNING
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get nodes
+NAME                                                  STATUS   ROLES    AGE   VERSION
+gke-gke-progression-clus-default-pool-636acfa8-3d8k   Ready    <none>   21m   v1.21.6-gke.1503
+gke-gke-progression-clus-default-pool-636acfa8-66s5   Ready    <none>   21m   v1.21.6-gke.1503
+gke-gke-progression-clus-default-pool-636acfa8-k7sn   Ready    <none>   21m   v1.21.6-gke.1503
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member=serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \
+    --role=roles/container.developer
+Updated IAM policy for project [wide-retina-346520].
+bindings:
+- members:
+  - serviceAccount:294619223509@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:service-294619223509@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:service-294619223509@compute-system.iam.gserviceaccount.com
+  role: roles/compute.serviceAgent
+- members:
+  - serviceAccount:294619223509@cloudbuild.gserviceaccount.com
+  role: roles/container.developer
+- members:
+  - serviceAccount:service-294619223509@container-engine-robot.iam.gserviceaccount.com
+  role: roles/container.serviceAgent
+- members:
+  - serviceAccount:service-294619223509@containerregistry.iam.gserviceaccount.com
+  role: roles/containerregistry.ServiceAgent
+- members:
+  - serviceAccount:294619223509-compute@developer.gserviceaccount.com
+  - serviceAccount:294619223509@cloudservices.gserviceaccount.com
+  role: roles/editor
+- members:
+  - user:s.aamir.mail@gmail.com
+  role: roles/owner
+- members:
+  - serviceAccount:service-294619223509@gcp-sa-pubsub.iam.gserviceaccount.com
+  role: roles/pubsub.serviceAgent
+etag: BwXcKqDmjio=
+version: 1
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud builds submit --tag gcr.io/$PROJECT_ID/$APP_NAME:1.0.0 src/
+Creating temporary tarball archive of 2 file(s) totalling 1.9 KiB before compression.
+Uploading tarball of [src/] to [gs://wide-retina-346520_cloudbuild/source/1649450553.674431-091752dc13d74960a9a13aa1e576ff41.tgz]
+Created [https://cloudbuild.googleapis.com/v1/projects/wide-retina-346520/locations/global/builds/af3667cb-88bd-4202-a77a-d1044fa1698b].
+Logs are available at [https://console.cloud.google.com/cloud-build/builds/af3667cb-88bd-4202-a77a-d1044fa1698b?project=294619223509].
+------------------------------------------------- REMOTE BUILD OUTPUT --------------------------------------------------
+starting build "af3667cb-88bd-4202-a77a-d1044fa1698b"
+
+FETCHSOURCE
+Fetching storage object: gs://wide-retina-346520_cloudbuild/source/1649450553.674431-091752dc13d74960a9a13aa1e576ff41.tgz#1649450555240994
+Copying gs://wide-retina-346520_cloudbuild/source/1649450553.674431-091752dc13d74960a9a13aa1e576ff41.tgz#1649450555240994...
+/ [1 files][  1.0 KiB/  1.0 KiB]
+Operation completed over 1 objects/1.0 KiB.
+BUILD
+Already have image (with digest): gcr.io/cloud-builders/docker
+Sending build context to Docker daemon  4.608kB
+Step 1/6 : FROM python:3.7-slim
+3.7-slim: Pulling from library/python
+c229119241af: Already exists
+5a3ae98ea812: Pulling fs layer
+28cb09124747: Pulling fs layer
+0d297daf4800: Pulling fs layer
+7fbd9e48e742: Pulling fs layer
+7fbd9e48e742: Waiting
+5a3ae98ea812: Verifying Checksum
+5a3ae98ea812: Download complete
+0d297daf4800: Verifying Checksum
+0d297daf4800: Download complete
+5a3ae98ea812: Pull complete
+7fbd9e48e742: Verifying Checksum
+7fbd9e48e742: Download complete
+28cb09124747: Download complete
+28cb09124747: Pull complete
+0d297daf4800: Pull complete
+7fbd9e48e742: Pull complete
+Digest: sha256:ce125c0b5b4014a3688244a26aa3cd6c82b38a2369db0ff902de18813cd06d36
+Status: Downloaded newer image for python:3.7-slim
+ d4b5bef6fdef
+Step 2/6 : ENV APP_HOME /app
+ Running in ef888a9c695e
+Removing intermediate container ef888a9c695e
+ b2262ee1e3af
+Step 3/6 : WORKDIR $APP_HOME
+ Running in 4ce612eff148
+Removing intermediate container 4ce612eff148
+ 4d8894e9217c
+Step 4/6 : COPY . ./
+ 6edd378bd3ee
+Step 5/6 : RUN pip install Flask gunicorn
+ Running in 20b87c3fe76f
+Collecting Flask
+  Downloading Flask-2.1.1-py3-none-any.whl (95 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 95.2/95.2 KB 14.6 MB/s eta 0:00:00
+Collecting gunicorn
+  Downloading gunicorn-20.1.0-py3-none-any.whl (79 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.5/79.5 KB 13.7 MB/s eta 0:00:00
+Collecting Werkzeug>=2.0
+  Downloading Werkzeug-2.1.1-py3-none-any.whl (224 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 224.7/224.7 KB 30.6 MB/s eta 0:00:00
+Collecting importlib-metadata>=3.6.0
+  Downloading importlib_metadata-4.11.3-py3-none-any.whl (18 kB)
+Collecting itsdangerous>=2.0
+  Downloading itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+Collecting Jinja2>=3.0
+  Downloading Jinja2-3.1.1-py3-none-any.whl (132 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 132.6/132.6 KB 22.0 MB/s eta 0:00:00
+Collecting click>=8.0
+  Downloading click-8.1.2-py3-none-any.whl (96 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 KB 17.0 MB/s eta 0:00:00
+Requirement already satisfied: setuptools>=3.0 in /usr/local/lib/python3.7/site-packages (from gunicorn) (57.5.0)
+Collecting zipp>=0.5
+  Downloading zipp-3.8.0-py3-none-any.whl (5.4 kB)
+Collecting typing-extensions>=3.6.4
+  Downloading typing_extensions-4.1.1-py3-none-any.whl (26 kB)
+Collecting MarkupSafe>=2.0
+  Downloading MarkupSafe-2.1.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+Installing collected packages: zipp, Werkzeug, typing-extensions, MarkupSafe, itsdangerous, gunicorn, Jinja2, importlib-metadata, click, Flask
+Successfully installed Flask-2.1.1 Jinja2-3.1.1 MarkupSafe-2.1.1 Werkzeug-2.1.1 click-8.1.2 gunicorn-20.1.0 importlib-metadata-4.11.3 itsdangerous-2.1.2 typing-extensions-4.1.1 zipp-3.8.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+Removing intermediate container 20b87c3fe76f
+ a3161ad51a5b
+Step 6/6 : CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+ Running in 99af83f6de06
+Removing intermediate container 99af83f6de06
+ 5e4dfdafddbd
+Successfully built 5e4dfdafddbd
+Successfully tagged gcr.io/wide-retina-346520/myapp:1.0.0
+PUSH
+Pushing gcr.io/wide-retina-346520/myapp:1.0.0
+The push refers to repository [gcr.io/wide-retina-346520/myapp]
+a8fe8776c6f7: Preparing
+b70c1cfba342: Preparing
+72bf159a890b: Preparing
+23082294d405: Preparing
+de08555149f7: Preparing
+b8a74ae2f7f6: Preparing
+43140e0754dc: Preparing
+608f3a074261: Preparing
+b8a74ae2f7f6: Waiting
+43140e0754dc: Waiting
+608f3a074261: Waiting
+23082294d405: Layer already exists
+de08555149f7: Layer already exists
+b8a74ae2f7f6: Layer already exists
+43140e0754dc: Layer already exists
+608f3a074261: Layer already exists
+b70c1cfba342: Pushed
+72bf159a890b: Pushed
+a8fe8776c6f7: Pushed
+1.0.0: digest: sha256:385d642906e7197bd8da594ebfe74605beffcbb6f1611e844e620cddf9fceb45 size: 1996
+DONE
+------------------------------------------------------------------------------------------------------------------------
+ID: af3667cb-88bd-4202-a77a-d1044fa1698b
+CREATE_TIME: 2022-04-08T20:42:36+00:00
+DURATION: 23S
+SOURCE: gs://wide-retina-346520_cloudbuild/source/1649450553.674431-091752dc13d74960a9a13aa1e576ff41.tgz
+IMAGES: gcr.io/wide-retina-346520/myapp:1.0.0
+STATUS: SUCCESS
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get pod
+No resources found in default namespace.
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl create ns production
+namespace/production created
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl apply -f k8s/deployments/prod -n production
+kubectl apply -f k8s/deployments/canary -n production
+kubectl apply -f k8s/services -n production
+deployment.apps/myapp-production created
+deployment.apps/myapp-canary created
+service/myapp created
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get pods -n production -l app=$APP_NAME -l role=frontend
+NAME                                READY   STATUS    RESTARTS   AGE
+myapp-canary-65669786d9-8rss2       1/1     Running   0          16s
+myapp-production-6b4c6cf666-86dv5   1/1     Running   0          16s
+myapp-production-6b4c6cf666-m9qw8   1/1     Running   0          16s
+myapp-production-6b4c6cf666-nbjs4   1/1     Running   0          16s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get all -A
+NAMESPACE     NAME                                                                 READY   STATUS    RESTARTS   AGE
+kube-system   pod/event-exporter-gke-5479fd58c8-h8kx4                              2/2     Running   0          56m
+kube-system   pod/fluentbit-gke-b9fzg                                              2/2     Running   0          55m
+kube-system   pod/fluentbit-gke-fv2xr                                              2/2     Running   0          55m
+kube-system   pod/fluentbit-gke-h8s7d                                              2/2     Running   0          55m
+kube-system   pod/gke-metrics-agent-h58cc                                          1/1     Running   0          55m
+kube-system   pod/gke-metrics-agent-jvjp6                                          1/1     Running   0          55m
+kube-system   pod/gke-metrics-agent-jzsc6                                          1/1     Running   0          55m
+kube-system   pod/konnectivity-agent-7dd9dbfcd9-58ttq                              1/1     Running   0          56m
+kube-system   pod/konnectivity-agent-7dd9dbfcd9-j7kx7                              1/1     Running   0          55m
+kube-system   pod/konnectivity-agent-7dd9dbfcd9-ql577                              1/1     Running   0          55m
+kube-system   pod/konnectivity-agent-autoscaler-6849fff748-2g82v                   1/1     Running   0          56m
+kube-system   pod/kube-dns-697dc8fc8b-slkft                                        4/4     Running   0          56m
+kube-system   pod/kube-dns-697dc8fc8b-vnz77                                        4/4     Running   0          55m
+kube-system   pod/kube-dns-autoscaler-844c9d9448-njkgd                             1/1     Running   0          56m
+kube-system   pod/kube-proxy-gke-gke-progression-clus-default-pool-636acfa8-3d8k   1/1     Running   0          55m
+kube-system   pod/kube-proxy-gke-gke-progression-clus-default-pool-636acfa8-66s5   1/1     Running   0          55m
+kube-system   pod/kube-proxy-gke-gke-progression-clus-default-pool-636acfa8-k7sn   1/1     Running   0          54m
+kube-system   pod/l7-default-backend-69fb9fd9f9-kr72q                              1/1     Running   0          56m
+kube-system   pod/metrics-server-v0.4.5-bbb794dcc-f9ptm                            2/2     Running   0          55m
+kube-system   pod/pdcsi-node-hlfkg                                                 2/2     Running   0          55m
+kube-system   pod/pdcsi-node-lphzx                                                 2/2     Running   0          55m
+kube-system   pod/pdcsi-node-mjv45                                                 2/2     Running   0          55m
+production    pod/myapp-canary-65669786d9-8rss2                                    1/1     Running   0          25s
+production    pod/myapp-production-6b4c6cf666-86dv5                                1/1     Running   0          25s
+production    pod/myapp-production-6b4c6cf666-m9qw8                                1/1     Running   0          25s
+production    pod/myapp-production-6b4c6cf666-nbjs4                                1/1     Running   0          25s
+
+NAMESPACE     NAME                           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+default       service/kubernetes             ClusterIP      10.120.0.1     <none>        443/TCP         57m
+kube-system   service/default-http-backend   NodePort       10.120.4.54    <none>        80:32478/TCP    56m
+kube-system   service/kube-dns               ClusterIP      10.120.0.10    <none>        53/UDP,53/TCP   56m
+kube-system   service/metrics-server         ClusterIP      10.120.5.243   <none>        443/TCP         56m
+production    service/myapp                  LoadBalancer   10.120.12.99   <pending>     80:30924/TCP    24s
+
+NAMESPACE     NAME                                       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                                        AGE
+kube-system   daemonset.apps/fluentbit-gke               3         3         3       3            3           kubernetes.io/os=linux                                               56m
+kube-system   daemonset.apps/gke-metrics-agent           3         3         3       3            3           kubernetes.io/os=linux                                               56m
+kube-system   daemonset.apps/gke-metrics-agent-windows   0         0         0       0            0           kubernetes.io/os=windows                                             56m
+kube-system   daemonset.apps/kube-proxy                  0         0         0       0            0           kubernetes.io/os=linux,node.kubernetes.io/kube-proxy-ds-ready=true   55m
+kube-system   daemonset.apps/metadata-proxy-v0.1         0         0         0       0            0           cloud.google.com/metadata-proxy-ready=true,kubernetes.io/os=linux    56m
+kube-system   daemonset.apps/nvidia-gpu-device-plugin    0         0         0       0            0           <none>                                                               56m
+kube-system   daemonset.apps/pdcsi-node                  3         3         3       3            3           kubernetes.io/os=linux                                               56m
+kube-system   daemonset.apps/pdcsi-node-windows          0         0         0       0            0           kubernetes.io/os=windows                                             56m
+
+NAMESPACE     NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   deployment.apps/event-exporter-gke              1/1     1            1           56m
+kube-system   deployment.apps/konnectivity-agent              3/3     3            3           56m
+kube-system   deployment.apps/konnectivity-agent-autoscaler   1/1     1            1           56m
+kube-system   deployment.apps/kube-dns                        2/2     2            2           56m
+kube-system   deployment.apps/kube-dns-autoscaler             1/1     1            1           56m
+kube-system   deployment.apps/l7-default-backend              1/1     1            1           56m
+kube-system   deployment.apps/metrics-server-v0.4.5           1/1     1            1           55m
+production    deployment.apps/myapp-canary                    1/1     1            1           25s
+production    deployment.apps/myapp-production                3/3     3            3           26s
+
+NAMESPACE     NAME                                                       DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/event-exporter-gke-5479fd58c8              1         1         1       56m
+kube-system   replicaset.apps/konnectivity-agent-7dd9dbfcd9              3         3         3       56m
+kube-system   replicaset.apps/konnectivity-agent-autoscaler-6849fff748   1         1         1       56m
+kube-system   replicaset.apps/kube-dns-697dc8fc8b                        2         2         2       56m
+kube-system   replicaset.apps/kube-dns-autoscaler-844c9d9448             1         1         1       56m
+kube-system   replicaset.apps/l7-default-backend-69fb9fd9f9              1         1         1       56m
+kube-system   replicaset.apps/metrics-server-v0.4.5-56fcb96597           0         0         0       55m
+kube-system   replicaset.apps/metrics-server-v0.4.5-bbb794dcc            1         1         1       55m
+production    replicaset.apps/myapp-canary-65669786d9                    1         1         1       26s
+production    replicaset.apps/myapp-production-6b4c6cf666                3         3         3       27s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get service $APP_NAME -n production
+NAME    TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+myapp   LoadBalancer   10.120.12.99   <pending>     80:30924/TCP   44s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get service $APP_NAME -n production
+NAME    TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
+myapp   LoadBalancer   10.120.12.99   35.222.51.72   80:30924/TCP   64s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ export PRODUCTION_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}"  --namespace=production services $APP_NAME)
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ curl http://$PRODUCTION_IP
+Hello World v1.0s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ ls -l
+total 24
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:13 build
+drwxr-xr-x 4 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 k8s
+-rw-r--r-- 1 s_aamir_mail s_aamir_mail 11159 Apr  8 20:11 README.md
+drwxr-xr-x 2 s_aamir_mail s_aamir_mail  4096 Apr  8 20:11 src
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ cat build/branch-cloudbuild.yaml
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+
+### Build
+
+  - id: 'build'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          docker build -t gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA} ./src
+
+
+
+### Test
+
+
+### Publish
+  - id: 'publish'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          docker push gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA}
+
+
+
+### Deploy
+  - id: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
+    env:
+      - 'KUBECONFIG=/kube/config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+
+          PROJECT=$$(gcloud config get-value core/project)
+
+
+          gcloud container clusters get-credentials "${_CLUSTER}" \
+            --project "$${PROJECT}" \
+            --zone "${_ZONE}"
+
+          sed -i 's|gcr.io/wide-retina-346520/myapp:.*|gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA}|' ./k8s/deployments/dev/*.yaml
+
+          kubectl get ns ${BRANCH_NAME} || kubectl create ns ${BRANCH_NAME}
+          kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/deployments/dev
+          kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/services
+
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$  kubectl get ns ${BRANCH_NAME} || kubectl create ns ${BRANCH_NAME}
+NAME              STATUS   AGE
+default           Active   59m
+kube-node-lease   Active   59m
+kube-public       Active   59m
+kube-system       Active   59m
+production        Active   3m14s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/deployments/dev
+Error from server (NotFound): error when creating "k8s/deployments/dev/frontend-dev.yaml": namespaces "--recursive" not found
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ cat build/branch-cloudbuild.yaml
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+
+### Build
+
+  - id: 'build'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          docker build -t gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA} ./src
+
+
+
+### Test
+
+
+### Publish
+  - id: 'publish'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          docker push gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA}
+
+
+
+### Deploy
+  - id: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
+    env:
+      - 'KUBECONFIG=/kube/config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+
+          PROJECT=$$(gcloud config get-value core/project)
+
+
+          gcloud container clusters get-credentials "${_CLUSTER}" \
+            --project "$${PROJECT}" \
+            --zone "${_ZONE}"
+
+          sed -i 's|gcr.io/wide-retina-346520/myapp:.*|gcr.io/wide-retina-346520/myapp:${BRANCH_NAME}-${SHORT_SHA}|' ./k8s/deployments/dev/*.yaml
+
+          kubectl get ns ${BRANCH_NAME} || kubectl create ns ${BRANCH_NAME}
+          kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/deployments/dev
+          kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/services
+
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get ns ${BRANCH_NAME} 
+NAME              STATUS   AGE
+default           Active   61m
+kube-node-lease   Active   61m
+kube-public       Active   61m
+kube-system       Active   61m
+production        Active   5m14s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ cat build/branch-trigger.json
+{
+  "name": "branch",
+  "description": "Trigger dev build/deploy for any branch other than master",
+  "filename": "build/branch-cloudbuild.yaml",
+
+  "triggerTemplate": {
+    "projectId": "wide-retina-346520",
+    "repoName": "gke-progression",
+    "branchName": "main",
+    "invertRegex": true
+  },
+   "substitutions": {
+    "_ZONE": "us-central1-b",
+    "_CLUSTER": "gke-progression-cluster"
+  }
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get ns ${BRANCH_NAME} || kubectl create ns ${BRANCH_NAME}}
+NAME              STATUS   AGE
+default           Active   63m
+kube-node-lease   Active   63m
+kube-public       Active   63m
+kube-system       Active   63m
+production        Active   6m36s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/deployments/dev
+Error from server (NotFound): error when creating "k8s/deployments/dev/frontend-dev.yaml": namespaces "--recursive" not found
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ echo ${BRANCH_NAME}
+
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$  kubectl apply --namespace ${BRANCH_NAME} --recursive -f k8s/services
+#!/usr/bin/python
+#
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+Error from server (NotFound): error when creating "k8s/services/frontend.yaml": namespaces "--recursive" not found
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud beta builds triggers create cloud-source-repositories \
+  --trigger-config build/branch-trigger.json
+Created [https://cloudbuild.googleapis.com/v1/projects/wide-retina-346520/locations/global/triggers/2145f667-9059-4aaa-8a83-428afed7ced9].
+NAME: branch
+CREATE_TIME: 2022-04-08T21:24:01+00:00
+STATUS:
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git checkout -b new-feature-1
+Switched to a new branch 'new-feature-1'
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ vi src/app.py
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git add . && git commit -m "updated" && git push gcp new-feature-1
+[new-feature-1 43e7199] updated
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 372 bytes | 372.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2)
+To https://source.developers.google.com/p/wide-retina-346520/r/gke-progression
+ * [new branch]      new-feature-1 -> new-feature-1
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get service $APP_NAME -n new-feature-1
+NAME    TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+myapp   LoadBalancer   10.120.12.78   <pending>     80:30092/TCP   23s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ kubectl get service $APP_NAME -n new-feature-1
+NAME    TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE
+myapp   LoadBalancer   10.120.12.78   35.226.148.15   80:30092/TCP   43s
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ export BRANCH_IP=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}"  --namespace=new-feature-1 services $APP_NAME)
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ curl http://$BRANCH_IP
+Hello World v1.1s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud beta builds triggers create cloud-source-repositories \
+  --trigger-config build/main-trigger.json
+Created [https://cloudbuild.googleapis.com/v1/projects/wide-retina-346520/locations/global/triggers/3afd6c8e-94e8-4ae7-8352-7f4b3faa4cb9].
+NAME: main
+CREATE_TIME: 2022-04-08T21:28:15+00:00
+STATUS:
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git checkout main
+git merge new-feature-1
+git push gcp main
+Switched to branch 'main'
+Updating 5394108..43e7199
+Fast-forward
+ src/app.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://source.developers.google.com/p/wide-retina-346520/r/gke-progression
+   5394108..43e7199  main -> main
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ while true; do curl -w "\n" http://$PRODUCTION_IP; sleep 1;  done
+Hello World v1.1
+Hello World v1.1
+Hello World v1.0
+Hello World v1.0
+Hello World v1.0
+Hello World v1.1
+^C
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ gcloud beta builds triggers create cloud-source-repositories \
+  --trigger-config build/tag-trigger.json
+Created [https://cloudbuild.googleapis.com/v1/projects/wide-retina-346520/locations/global/triggers/42426089-2ffb-4794-8430-3ad2cca52f18].
+NAME: tag
+CREATE_TIME: 2022-04-08T21:30:18+00:00
+STATUS:
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ git tag 1.1
+git push gcp 1.1
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://source.developers.google.com/p/wide-retina-346520/r/gke-progression
+ * [new tag]         1.1 -> 1.1
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$ while true; do curl -w "\n" http://$PRODUCTION_IP; sleep 1;  done
+Hello World v1.1
+Hello World v1.0
+Hello World v1.0
+Hello World v1.1
+Hello World v1.0
+Hello World v1.0
+Hello World v1.1
+Hello World v1.0
+Hello World v1.0
+^C
+s_aamir_mail@cloudshell:~/gke-progression/labs/gke-progression (wide-retina-346520)$
